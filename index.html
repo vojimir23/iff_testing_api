@@ -1272,7 +1272,11 @@
         async function initialize() {
             const container = document.getElementById('filter-rows-container');
             try {
-                const response = await fetch(`${API_BASE_URL}/filters/options`);
+                const response = await fetch(`${API_BASE_URL}/filters/options`, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        });
                 availableOptions = await response.json();
 
                 const projectOptions = availableOptions.projects || [];
@@ -1417,3 +1421,4 @@
 
 </body>
 </html>
+
