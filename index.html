@@ -352,7 +352,7 @@
         <div id="results-container">
             <h2>Results (<span id="results-count">0</span>)</h2>
             <div id="results-content">
-                <p>Results will be shown here.</p>
+                <p>Please select at least one project or add a filter to see results.</p>
             </div>
         </div>
     </div>
@@ -505,9 +505,18 @@
 
             document.getElementById('api-endpoint').textContent = `${API_BASE_URL}/entities/search`;
             document.getElementById('api-payload').textContent = JSON.stringify(query, null, 2);
-            
-            currentQueryForRendering = query; // Store query for event handlers
+            currentQueryForRendering = query;
 
+            // --- MODIFIED LOGIC ---
+            // If no projects are selected AND no filter rules exist, clear the results and stop.
+            // This prevents fetching all data by default.
+            if (query.projects.length === 0 && query.rules.length === 0) {
+                document.getElementById('results-content').innerHTML = '<p>Please select at least one project or add a filter to see results.</p>';
+                document.getElementById('results-count').textContent = '0';
+                return; // Exit before making the API call
+            }
+            // --- END MODIFIED LOGIC ---
+            
             try {
                 const response = await fetch(`${API_BASE_URL}/entities/search`, {
                     method: 'POST',
@@ -1148,11 +1157,7 @@
 
         async function renderGenericDetailsModal(endpoint, titleKey) {
             try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
-                    }
-                });
+                const response = await fetch(endpoint);
                 if (!response.ok) throw new Error(`Server returned ${response.status}`);
                 const data = await response.json();
 
@@ -1267,11 +1272,7 @@
         async function initialize() {
             const container = document.getElementById('filter-rows-container');
             try {
-                const response = await fetch(`${API_BASE_URL}/filters/options`, {
-                    headers: {
-                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
-                    }
-                });
+                const response = await fetch(`${API_BASE_URL}/filters/options`);
                 availableOptions = await response.json();
 
                 const projectOptions = availableOptions.projects || [];
@@ -1399,7 +1400,8 @@
                     }
                 });
 
-                buildQueryAndFetch();
+                // No initial fetch on page load.
+                // buildQueryAndFetch();
 
             } catch (error) {
                 container.innerHTML = `
