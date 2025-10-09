@@ -520,10 +520,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/entities/search`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true' // <<< FIXED
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(query)
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1160,11 +1157,7 @@
 
         async function renderGenericDetailsModal(endpoint, titleKey) {
             try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'ngrok-skip-browser-warning': 'true' // <<< FIXED
-                    }
-                });
+                const response = await fetch(endpoint);
                 if (!response.ok) throw new Error(`Server returned ${response.status}`);
                 const data = await response.json();
 
@@ -1279,11 +1272,7 @@
         async function initialize() {
             const container = document.getElementById('filter-rows-container');
             try {
-                const response = await fetch(`${API_BASE_URL}/filters/options`, {
-                    headers: {
-                        'ngrok-skip-browser-warning': 'true'
-                    }
-                });
+                const response = await fetch(`${API_BASE_URL}/filters/options`);
                 availableOptions = await response.json();
 
                 const projectOptions = availableOptions.projects || [];
