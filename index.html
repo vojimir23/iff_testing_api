@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPAC-style Search</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2 {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+        }
+        .filter-row select, .filter-row input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .date-filter-container input {
+            width: 80px;
+        }
+        .authorship-search-container, .manifestation-role-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logic-selector button {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .logic-selector button.active {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        .row-controls button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .row-controls button:hover {
+            background-color: #e9ecef;
+        }
+        #api-info-container {
+            margin-top: 2rem;
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+        #api-info-container pre {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        #results-container {
+            margin-top: 2rem;
+        }
+        /* --- MODIFIED AND NEW STYLES FOR RESULT CARDS --- */
+        #results-content {
+            display: flex;
+            flex-wrap: wrap; /* Allows cards to wrap to the next line */
+            gap: 1rem; /* Adds space between cards */
+        }
+        .result-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 1 1 300px; /* Flex properties for responsive cards */
+            min-width: 280px;
+        }
+        .result-card h3 {
+            cursor: pointer;
+            color: #0d6efd;
+            text-decoration: underline;
+            margin-top: 0.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            gap: 8px;
+        }
+        .entity-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .project-tag {
+            font-size: 12px;
+            font-weight: bold;
+            color: #6c757d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Entity Tag Colors */
+        .entity-tag-work { background-color: black; color: white; }
+        .entity-tag-expression { background-color: grey; color: white; }
+        .entity-tag-manifestation { background-color: orange; color: black; }
+        .entity-tag-item { background-color: #FFC300; color: black; } /* Dark Yellow */
+        .entity-tag-page { background-color: #ADD8E6; color: white; } /* Light Blue */
+        .entity-tag-visual_object { background-color: #FF00FF; color: white; } /* Neon Fuchsia */
+        .entity-tag-physical_object { background-color: purple; color: white; }
+        .entity-tag-person { background-color: #2E8B57; color: black; } /* Dark Green */
+        .entity-tag-institution { background-color: #20B2AA; color: black; } /* Greenish Cyan */
+        .entity-tag-event { background-color: #F08080; color: black; } /* Light Red */
+        .entity-tag-abstract_character { background-color: #90EE90; color: black; } /* Light Green */
+        .entity-tag-place { background-color: #B22222; color: white; } /* Dark Red */
+
+        .result-card .author-link, .modal-content .author-link, .work-link, .ac-link, .vo-link, .manifestation-link, .place-link, .item-link, .expression-link, .institution-link, .page-link, .physical-object-link {
+            cursor: pointer;
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+
+        /* --- CUSTOM MULTI-SELECT DROPDOWN --- */
+        .custom-multiselect {
+            position: relative;
+            min-width: 200px;
+        }
+        .multiselect-display {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .multiselect-panel {
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-top: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .multiselect-panel.visible {
+            display: block;
+        }
+        .multiselect-search {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            outline: none;
+        }
+        .multiselect-options-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .multiselect-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .multiselect-option:hover {
+            background-color: #f1f1f1;
+        }
+        .multiselect-option.special-option {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .multiselect-option label {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        /* --- NEW STYLES FOR MODAL POPUP --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.visible {
+            display: flex;
+        }
+        .modal-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+        .modal-content .detail-section {
+            margin-bottom: 1rem;
+        }
+        .modal-content .detail-section h4 {
+            margin-bottom: 0.5rem;
+        }
+        .modal-content ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        .modal-content .expression-card, .modal-content .manifestation-card {
+            border: 1px solid #e9ecef;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        /* --- NEW STYLES FOR ITEM PAGES --- */
+        .page-toggle {
+            cursor: pointer;
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+        .vo-list {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        .vo-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #ADD8E6; /* Light Blue */
+            color: #212529;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 4px 4px 4px 0;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .vo-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        /* --- NEW STYLES FOR "SHOW MORE" BUTTON --- */
+        .show-more-pages-btn {
+            display: block;
+            margin: 10px auto 0;
+            padding: 8px 16px;
+            border: 1px solid #0d6efd;
+            background-color: #ffffff;
+            color: #0d6efd;
+            border-radius: 20px; /* Pill shape */
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .show-more-pages-btn:hover {
+            background-color: #0d6efd;
+            color: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Find Entities by Criteria</h1>
+        
+        <div id="filter-rows-container">
+            <!-- Filter rows will be dynamically inserted here -->
+        </div>
+
+        <div id="api-info-container">
+            <h2>API Request Info</h2>
+            <p><strong>Endpoint:</strong> <code id="api-endpoint"></code></p>
+            <p><strong>Request Body:</strong></p>
+            <pre><code id="api-payload"></code></pre>
+        </div>
+
+        <div id="results-container">
+            <h2>Results (<span id="results-count">0</span>)</h2>
+            <div id="results-content">
+                <p>Results will be shown here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Modal Popup HTML -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close-btn" title="Close">×</button>
+            <div id="modal-content-target" class="modal-content">
+                <!-- Dynamic content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev";
+        let availableOptions = {};
+        let itemPagesData = {};
+        let currentQueryForRendering = {};
+
+        function linkify(text) {
+            if (typeof text !== 'string' || !text) return text;
+            const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlRegex, function(url) {
+                const href = url.startsWith('www.') ? 'http://' + url : url;
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+            });
+        }
+
+        async function buildQueryAndFetch() {
+            const query = {
+                projects: [],
+                entity: document.getElementById('entity-select').value,
+                rules: []
+            };
+
+            const projectSelect = document.getElementById('project-select');
+            if (projectSelect) {
+                query.projects = Array.from(projectSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                                    .map(cb => cb.value)
+                                    .filter(val => val !== '__SELECT_ALL__');
+            }
+
+            document.querySelectorAll('.filter-row.sub-row').forEach(row => {
+                const field = row.querySelector('.field-select')?.value;
+                const logic = row.querySelector('.logic-selector .active')?.dataset.logic;
+                const multiselect = row.querySelector('.custom-multiselect');
+                const dateFilter = row.querySelector('.date-filter-container');
+                const authorshipSearchFilter = row.querySelector('.authorship-search-container');
+                const manifestationRoleFilter = row.querySelector('.manifestation-role-container');
+
+                if (field && logic && multiselect && !dateFilter && !authorshipSearchFilter && !manifestationRoleFilter) {
+                    const checkedInputs = multiselect.querySelectorAll('input[type="checkbox"]:checked');
+                    checkedInputs.forEach(input => {
+                        if (input.value !== '__SELECT_ALL__') {
+                            const ruleValue = input.value;
+                            const backendField = (field === 'role') ? 'role_of_person_or_institution' : field;
+                            query.rules.push({ field: backendField, logic, value: ruleValue, op: 'equals' });
+                        }
+                    });
+                } 
+                else if (field === 'publication_date' && dateFilter) {
+                    const fromVal = dateFilter.querySelector('.date-from').value;
+                    const toVal = dateFilter.querySelector('.date-to').value;
+                    if (fromVal) {
+                        query.rules.push({ field: 'publication_date', logic: 'gte', value: fromVal });
+                    }
+                    if (toVal) {
+                        query.rules.push({ field: 'publication_date', logic: 'lte', value: toVal });
+                    }
+                }
+                else if (field === 'authorship' && logic && authorshipSearchFilter) {
+                    const roleSelect = authorshipSearchFilter.querySelector('.authorship-multiselect');
+                    const personSelect = authorshipSearchFilter.querySelector('.person-multiselect');
+
+                    const selectedRoles = Array.from(roleSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(val => val !== '__SELECT_ALL__');
+                    
+                    const selectedPeople = Array.from(personSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(val => val !== '__SELECT_ALL__' && val !== '__EMPTY__');
+
+                    if (selectedRoles.length === 0 && selectedPeople.length > 0) {
+                        selectedPeople.forEach(person => {
+                            query.rules.push({ field: 'author', logic, value: person });
+                            query.rules.push({ field: 'secondary_author', logic, value: person });
+                        });
+                    } else if (selectedRoles.length > 0 && selectedPeople.length > 0) {
+                        selectedRoles.forEach(role => {
+                            if (role === 'Author') {
+                                selectedPeople.forEach(person => query.rules.push({ field: 'author', logic, value: person }));
+                            } else if (role === 'Secondary author') {
+                                selectedPeople.forEach(person => query.rules.push({ field: 'secondary_author', logic, value: person }));
+                            }
+                        });
+                    }
+                }
+                else if (field === 'manifestation_role' && logic && manifestationRoleFilter) {
+                    const roleSelect = manifestationRoleFilter.querySelector('.manifestation-role-multiselect');
+                    const personInstSelect = manifestationRoleFilter.querySelector('.person-institution-multiselect');
+
+                    const selectedRoles = Array.from(roleSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value.toLowerCase()) // e.g., 'publisher'
+                        .filter(val => val !== '__select_all__');
+                    
+                    const selectedPeopleAndInst = Array.from(personInstSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(val => val !== '__SELECT_ALL__' && val !== '__EMPTY__');
+
+                    if (selectedRoles.length > 0 && selectedPeopleAndInst.length > 0) {
+                        selectedRoles.forEach(roleField => {
+                            selectedPeopleAndInst.forEach(personOrInst => {
+                                query.rules.push({ field: roleField, logic, value: personOrInst });
+                            });
+                        });
+                    }
+                }
+                else if (field === 'visual_object_role' && logic && row.querySelector('.manifestation-role-container')) {
+                    const roleSelect = row.querySelector('.visual-object-role-multiselect');
+                    const personInstSelect = row.querySelector('.person-institution-vo-multiselect');
+
+                    const selectedRoles = Array.from(roleSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(val => val !== '__SELECT_ALL__');
+                    
+                    const selectedPeopleAndInst = Array.from(personInstSelect.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(val => val !== '__SELECT_ALL__' && val !== '__EMPTY__');
+
+                    const roleToFieldMap = {
+                        'Owner': 'visual_object_owner',
+                        'Inscriber': 'visual_object_inscriber',
+                        'Sender': 'visual_object_sender',
+                        'Recipient': 'visual_object_recipient'
+                    };
+
+                    if (selectedRoles.length > 0 && selectedPeopleAndInst.length > 0) {
+                        selectedRoles.forEach(role => {
+                            const roleField = roleToFieldMap[role];
+                            if (roleField) {
+                                selectedPeopleAndInst.forEach(personOrInst => {
+                                    query.rules.push({ field: roleField, logic, value: personOrInst });
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+
+            document.getElementById('api-endpoint').textContent = `${API_BASE_URL}/entities/search`;
+            document.getElementById('api-payload').textContent = JSON.stringify(query, null, 2);
+            
+            currentQueryForRendering = query; // Store query for event handlers
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/entities/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(query)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const responseData = await response.json();
+                document.getElementById('results-count').textContent = responseData.count;
+                displayResults(responseData.results, query.entity, query);
+
+            } catch (error) {
+                document.getElementById('results-content').innerHTML = `<p style="color: red;">Error fetching data: ${error.message}</p>`;
+                document.getElementById('results-count').textContent = '0';
+            }
+        }
+
+        function renderPageListItems(pages, voRoleRules) {
+            if (!pages || pages.length === 0) return '';
+
+            return pages.map(page => {
+                let visualObjects = page.visual_objects || [];
+                
+                if (voRoleRules.length > 0) {
+                    const andRules = voRoleRules.filter(r => r.logic === 'and');
+                    const orRules = voRoleRules.filter(r => r.logic === 'or');
+                    const notRules = voRoleRules.filter(r => r.logic === 'not');
+
+                    visualObjects = visualObjects.filter(vo => {
+                        const roleMap = {
+                            'visual_object_owner': vo.owners || [],
+                            'visual_object_inscriber': vo.inscribers || [],
+                            'visual_object_sender': vo.senders || [],
+                            'visual_object_recipient': vo.recipients || []
+                        };
+
+                        const checkMatch = (rule) => {
+                            const attributes = roleMap[rule.field] || [];
+                            return attributes.includes(rule.value);
+                        };
+
+                        if (notRules.some(rule => checkMatch(rule))) return false;
+                        if (!andRules.every(rule => checkMatch(rule))) return false;
+                        if (orRules.length > 0 && !orRules.some(rule => checkMatch(rule))) return false;
+                        
+                        return true;
+                    });
+                }
+
+                if (visualObjects.length === 0) return '';
+                
+                const voCircles = visualObjects.map((vo, index) => {
+                    return `<span class="vo-circle" title="${vo.vo_name}" data-vo-id="${vo.vo_id}">${index + 1}</span>`;
+                }).join('');
+
+                return `<li>
+                    <span class="page-toggle">${page.page_label}</span>
+                    <div class="vo-list" style="display: none;">${voCircles}</div>
+                </li>`;
+
+            }).join('');
+        }
+
+        function displayResults(results, entity, query) {
+            const resultsContent = document.getElementById('results-content');
+            itemPagesData = {}; // Clear previous data
+
+            if (results.length === 0) {
+                resultsContent.innerHTML = '<p>No results match the current filters.</p>';
+                return;
+            }
+
+            if (entity === 'work') {
+                resultsContent.innerHTML = results.map(work => {
+                    const authorInfo = work.authors.map(author => {
+                        const dateParts = [
+                            author.birth_date,
+                            author.birth_date_notes,
+                            author.death_date,
+                            author.death_date_notes
+                        ].filter(Boolean);
+
+                        const dateString = dateParts.length > 0 ? ` (${dateParts.join(' - ')})` : '';
+                        
+                        return {
+                            link: `<a href="#" class="author-link" data-author-id="${author.person_id}">${author.person_name}</a>`,
+                            date: dateString
+                        };
+                    });
+
+                    const authorLinks = authorInfo.map(info => info.link).join(', ');
+                    const authorDates = authorInfo.map(info => info.date).filter(d => d).join(', ');
+
+                    const classificationsHTML = work.classifications.length > 0 
+                        ? linkify(work.classifications.join(', ')) 
+                        : '<em>None</em>';
+
+                    const expressionsHTML = work.expressions && work.expressions.length > 0
+                        ? `<ul>${work.expressions.map(exp => `<li><a href="#" class="expression-link" data-expression-id="${exp.expression_id}">${exp.expression_title}</a></li>`).join('')}</ul>`
+                        : '<em>None</em>';
+
+                    return `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <span class="entity-tag entity-tag-work">Work</span>
+                            <span class="project-tag">${work.project}</span>
+                        </div>
+                        <h3 data-work-id="${work.work_id}">${work.work_title || work.work_id}</h3>
+                        <div><strong>Expressions:</strong> ${expressionsHTML}</div>
+                        <p><strong>Authors:</strong> ${authorLinks || '<em>None</em>'}</p>
+                        <p><strong>Date:</strong> ${authorDates || '<em>Not available</em>'}</p>
+                        <p><strong>Classifications:</strong> ${classificationsHTML}</p>
+                    </div>`;
+                }).join('');
+            } else if (entity === 'expression') {
+                resultsContent.innerHTML = results.map(exp => {
+                    const authorInfo = exp.authors.map(author => {
+                        const dateParts = [
+                            author.birth_date,
+                            author.birth_date_notes,
+                            author.death_date,
+                            author.death_date_notes
+                        ].filter(Boolean);
+                        const dateString = dateParts.length > 0 ? ` (${dateParts.join(' - ')})` : '';
+                        return {
+                            link: `<a href="#" class="author-link" data-author-id="${author.person_id}">${author.person_name}</a>`,
+                            date: dateString
+                        };
+                    });
+                    const authorLinks = authorInfo.map(info => info.link).join(', ');
+                    const authorDates = authorInfo.map(info => info.date).filter(d => d).join(', ');
+
+                    let secondaryAuthorsHTML = '';
+                    let secondaryAuthorDatesHTML = '';
+                    if (exp.secondary_authors && exp.secondary_authors.length > 0) {
+                        const secAuthorInfo = exp.secondary_authors.map(author => {
+                            const dateParts = [
+                                author.birth_date,
+                                author.birth_date_notes,
+                                author.death_date,
+                                author.death_date_notes
+                            ].filter(Boolean);
+                            const dateString = dateParts.length > 0 ? ` (${dateParts.join(' - ')})` : '';
+                            return {
+                                link: `<a href="#" class="author-link" data-author-id="${author.person_id}">${author.person_name}</a>`,
+                                date: dateString
+                            };
+                        });
+                        const secAuthorLinks = secAuthorInfo.map(info => info.link).join(', ');
+                        const secAuthorDates = secAuthorInfo.map(info => info.date).filter(d => d).join(', ');
+
+                        secondaryAuthorsHTML = `<p><strong>Secondary Authors:</strong> ${secAuthorLinks}</p>`;
+                        if (secAuthorDates) {
+                            secondaryAuthorDatesHTML = `<p><strong>Date:</strong> ${secAuthorDates}</p>`;
+                        }
+                    }
+
+                    const typeHTML = linkify(exp.type_of_expression.join(', ')) || '<em>None</em>';
+                    const languageHTML = linkify(exp.language.join(', ')) || '<em>None</em>';
+
+                    return `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <span class="entity-tag entity-tag-expression">Expression</span>
+                            <span class="project-tag">${exp.project}</span>
+                        </div>
+                        <h3 data-expression-id="${exp.expression_id}">${exp.expression_title || exp.expression_id}</h3>
+                        <p><strong>Parent Work:</strong> <a href="#" class="work-link" data-work-id="${exp.work_id}">${exp.work_title}</a></p>
+                        <p><strong>Authors:</strong> ${authorLinks || '<em>None</em>'}</p>
+                        <p><strong>Date:</strong> ${authorDates || '<em>Not available</em>'}</p>
+                        ${secondaryAuthorsHTML}
+                        ${secondaryAuthorDatesHTML}
+                        <p><strong>Type:</strong> ${typeHTML}</p>
+                        <p><strong>Language:</strong> ${languageHTML}</p>
+                    </div>`;
+                }).join('');
+            } else if (entity === 'manifestation') {
+                resultsContent.innerHTML = results.map(man => {
+                    const placeHTML = man.publication_place 
+                        ? `<a href="#" class="place-link" data-place-id="${man.publication_place.place_id}">${man.publication_place.place_name}</a>`
+                        : '<em>None</em>';
+                    
+                    const itemsHTML = man.items.length > 0
+                        ? man.items.map(item => `<a href="#" class="item-link" data-item-id="${item.item_id}">${item.item_label}</a>`).join(', ')
+                        : '<em>None</em>';
+
+                    const volumeTitlesHTML = man.volume_titles && man.volume_titles.length > 0
+                        ? linkify(man.volume_titles.join(', '))
+                        : '<em>None</em>';
+
+                    return `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <span class="entity-tag entity-tag-manifestation">Manifestation</span>
+                            <span class="project-tag">${man.project}</span>
+                        </div>
+                        <h3 data-manifestation-id="${man.manifestation_id}">${man.manifestation_title || man.manifestation_id}</h3>
+                        <p><strong>Parent Work:</strong> <a href="#" class="work-link" data-work-id="${man.work_id}">${man.work_title}</a></p>
+                        <p><strong>Parent Expression:</strong> <a href="#" class="expression-link" data-expression-id="${man.expression_id}">${man.expression_title}</a></p>
+                        <p><strong>Place:</strong> ${placeHTML}</p>
+                        <p><strong>Date:</strong> ${man.publication_date || '<em>None</em>'}</p>
+                        <p><strong>Items:</strong> ${itemsHTML}</p>
+                        <p><strong>Volume Titles:</strong> ${volumeTitlesHTML}</p>
+                    </div>`;
+                }).join('');
+            } else if (entity === 'item') {
+                const voRoleRules = query.rules.filter(r => [
+                    'visual_object_owner', 
+                    'visual_object_inscriber', 
+                    'visual_object_sender', 
+                    'visual_object_recipient'
+                ].includes(r.field));
+
+                resultsContent.innerHTML = results.map(item => {
+                    const placeHTML = item.publication_place 
+                        ? `<a href="#" class="place-link" data-place-id="${item.publication_place.place_id}">${item.publication_place.place_name}</a>`
+                        : '<em>None</em>';
+                    
+                    let pagesContainerHTML = ' <em>None</em>';
+                    if (item.pages && item.pages.length > 0) {
+                        itemPagesData[item.item_id] = item.pages; // Store full data for this item
+
+                        const initialPages = item.pages.slice(0, 10);
+                        const initialPageContent = renderPageListItems(initialPages, voRoleRules);
+
+                        const showMoreButton = item.pages.length > 10
+                            ? `<button class="show-more-pages-btn" data-item-id="${item.item_id}" data-displayed="10">Show More</button>`
+                            : '';
+
+                        if (initialPageContent) {
+                            pagesContainerHTML = `
+                                <div class="pages-list-container" style="display: none;">
+                                    <ul style="list-style-type: none; padding-left: 0;">${initialPageContent}</ul>
+                                    ${showMoreButton}
+                                </div>`;
+                        } else {
+                            pagesContainerHTML = ' <em>No pages with visual objects matching the specified roles.</em>';
+                        }
+                    }
+
+                    const preservationHTML = item.preservation_status.length > 0 ? linkify(item.preservation_status.join(', ')) : '<em>None</em>';
+                    const ownerHTML = item.owner.length > 0 ? linkify(item.owner.join(', ')) : '<em>None</em>';
+                    const materialHTML = item.material.length > 0 ? linkify(item.material.join(', ')) : '<em>None</em>';
+                    const typeHTML = item.type_of_item.length > 0 ? linkify(item.type_of_item.join(', ')) : '<em>None</em>';
+
+                    const annotationTypesString = Object.entries(item.annotation_type_counts || {})
+                        .map(([type, count]) => `${type}: ${count}`)
+                        .join(', ');
+
+                    const annotatedPagesHTML = item.annotated_pages_count > 0
+                        ? `${item.annotated_pages_count} (${annotationTypesString})`
+                        : '0';
+
+                    return `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <span class="entity-tag entity-tag-item">Item</span>
+                            <span class="project-tag">${item.project}</span>
+                        </div>
+                        <h3 data-item-id="${item.item_id}">${item.item_label || item.item_id}</h3>
+                        <p><strong>Parent Work:</strong> <a href="#" class="work-link" data-work-id="${item.work_id}">${item.work_title}</a></p>
+                        <p><strong>Parent Expression:</strong> <a href="#" class="expression-link" data-expression-id="${item.expression_id}">${item.expression_title}</a></p>
+                        <p><strong>Parent Manifestation:</strong> <a href="#" class="manifestation-link" data-manifestation-id="${item.manifestation_id}">${item.manifestation_title}</a></p>
+                        <p><strong>Annotated page(s):</strong> ${annotatedPagesHTML}</p>
+                        <p><strong>Physical Object:</strong> ${item.physical_object_count}</p>
+                        <p><strong>Place:</strong> ${placeHTML}</p>
+                        <p><strong>Date:</strong> ${item.publication_date || '<em>None</em>'}</p>
+                        <div>
+                            <strong class="pages-main-toggle" style="cursor: pointer; color: #0d6efd;">Pages:</strong>
+                            ${pagesContainerHTML}
+                        </div>
+                        <p><strong>Preservation Status:</strong> ${preservationHTML}</p>
+                        <p><strong>Owner:</strong> ${ownerHTML}</p>
+                        <p><strong>Material:</strong> ${materialHTML}</p>
+                        <p><strong>Type of Item:</strong> ${typeHTML}</p>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function addFilterRow(container) {
+            const row = document.createElement('div');
+            row.className = 'filter-row sub-row';
+            row.innerHTML = `
+                <select class="field-select"></select>
+                <span class="value-placeholder"></span>
+                <span class="logic-placeholder"></span>
+                <div class="row-controls">
+                    <button class="remove-row-btn" title="Remove row">-</button>
+                    <button class="add-row-btn" title="Add new row">+</button>
+                </div>
+            `;
+            container.appendChild(row);
+            updateFieldSelector(row.querySelector('.field-select'));
+            attachRowEventListeners(row);
+        }
+
+        function createCustomMultiSelect(options, fieldName, config = {}) {
+            const selectId = `multiselect-${fieldName}-${Date.now()}`;
+            const container = document.createElement('div');
+            container.className = 'custom-multiselect';
+            if (config.customClass) {
+                container.classList.add(config.customClass);
+            }
+            
+            let optionsHTML = '';
+            (options || []).forEach(opt => {
+                const optionId = `${selectId}-opt-${String(opt).replace(/[^a-zA-Z0-9]/g, '')}`;
+                optionsHTML += `
+                    <li class="multiselect-option">
+                        <input type="checkbox" id="${optionId}" value="${opt}">
+                        <label for="${optionId}">${opt}</label>
+                    </li>`;
+            });
+
+            let emptyOptionLabel = config.emptyLabel || "(Has no value)";
+            let emptyOptionHTML = `
+                <li class="multiselect-option special-option">
+                    <input type="checkbox" id="${selectId}-empty" value="__EMPTY__">
+                    <label for="${selectId}-empty">${emptyOptionLabel}</label>
+                </li>`;
+            
+            if (config.hideEmpty) {
+                emptyOptionHTML = '';
+            }
+
+            container.innerHTML = `
+                <div class="multiselect-display" tabindex="0">${config.placeholder || '-- Select Value --'}</div>
+                <div class="multiselect-panel">
+                    <input type="text" class="multiselect-search" placeholder="Search...">
+                    <ul class="multiselect-options-list">
+                        <li class="multiselect-option special-option">
+                            <input type="checkbox" id="${selectId}-select-all" value="__SELECT_ALL__">
+                            <label for="${selectId}-select-all">Select All</label>
+                        </li>
+                        ${emptyOptionHTML}
+                        ${optionsHTML}
+                    </ul>
+                </div>
+            `;
+
+            const display = container.querySelector('.multiselect-display');
+            const panel = container.querySelector('.multiselect-panel');
+            const searchInput = container.querySelector('.multiselect-search');
+            const allCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+            const selectAllCheckbox = container.querySelector(`#${selectId}-select-all`);
+            const itemCheckboxes = Array.from(allCheckboxes).filter(cb => cb.value !== '__SELECT_ALL__');
+
+            display.addEventListener('click', () => panel.classList.toggle('visible'));
+
+            searchInput.addEventListener('keyup', () => {
+                const filter = searchInput.value.toLowerCase();
+                container.querySelectorAll('.multiselect-options-list li').forEach(li => {
+                    if (li.classList.contains('special-option')) return;
+                    const label = li.querySelector('label').textContent.toLowerCase();
+                    li.style.display = label.includes(filter) ? '' : 'none';
+                });
+            });
+
+            selectAllCheckbox.addEventListener('change', () => {
+                const visibleCheckboxes = itemCheckboxes.filter(cb => cb.closest('li').style.display !== 'none');
+                visibleCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+                updateDisplay();
+                buildQueryAndFetch();
+            });
+
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    if (!checkbox.checked) {
+                        selectAllCheckbox.checked = false;
+                    }
+                    updateDisplay();
+                    buildQueryAndFetch();
+                });
+            });
+
+            function updateDisplay() {
+                const selected = itemCheckboxes.filter(cb => cb.checked);
+                if (selected.length === 0) {
+                    display.textContent = config.placeholder || '-- Select Value --';
+                } else if (selected.length === 1) {
+                    display.textContent = selected[0].closest('li').querySelector('label').textContent;
+                } else {
+                    display.textContent = `${selected.length} items selected`;
+                }
+            }
+            
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    panel.classList.remove('visible');
+                }
+            });
+
+            return container;
+        }
+
+        function attachRowEventListeners(row) {
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                addFilterRow(document.getElementById('filter-rows-container'));
+            });
+
+            row.querySelector('.remove-row-btn').addEventListener('click', () => {
+                row.remove();
+                buildQueryAndFetch();
+            });
+
+            row.querySelector('.field-select').addEventListener('change', (e) => {
+                const field = e.target.value;
+                const valuePlaceholder = row.querySelector('.value-placeholder');
+                const logicPlaceholder = row.querySelector('.logic-placeholder');
+                
+                valuePlaceholder.innerHTML = '';
+                logicPlaceholder.innerHTML = '';
+
+                if (field) {
+                    const logicSelector = document.createElement('div');
+                    logicSelector.className = 'logic-selector';
+                    logicSelector.innerHTML = `
+                        <button data-logic="and" class="active">AND</button>
+                        <button data-logic="or">OR</button>
+                        <button data-logic="not">NOT</button>
+                    `;
+                    logicPlaceholder.appendChild(logicSelector);
+                    logicSelector.addEventListener('click', (btnEvent) => {
+                        if(btnEvent.target.tagName === 'BUTTON') {
+                            logicSelector.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                            btnEvent.target.classList.add('active');
+                            buildQueryAndFetch();
+                        }
+                    });
+
+                    if (field === 'publication_date') {
+                        const dateRange = availableOptions.publication_date_range || {min: 1500, max: 2025};
+                        valuePlaceholder.innerHTML = `
+                            <div class="date-filter-container">
+                                <label>From:</label>
+                                <input type="number" class="date-from" placeholder="${dateRange.min}" min="${dateRange.min}" max="${dateRange.max}">
+                                <label>To:</label>
+                                <input type="number" class="date-to" placeholder="${dateRange.max}" min="${dateRange.min}" max="${dateRange.max}">
+                            </div>
+                        `;
+                        valuePlaceholder.querySelectorAll('input').forEach(input => {
+                            input.addEventListener('change', buildQueryAndFetch);
+                        });
+                    } else if (field === 'authorship') {
+                        const container = document.createElement('div');
+                        container.className = 'authorship-search-container';
+                        
+                        const authorshipSelect = createCustomMultiSelect(['Author', 'Secondary author'], 'authorship', {
+                            placeholder: '-- Select Authorship --',
+                            hideEmpty: true,
+                            customClass: 'authorship-multiselect'
+                        });
+                        
+                        const personSelect = createCustomMultiSelect(availableOptions.all_people, 'person', {
+                            placeholder: '-- Select Person(s) --',
+                            hideEmpty: true,
+                            customClass: 'person-multiselect'
+                        });
+
+                        container.appendChild(authorshipSelect);
+                        container.appendChild(personSelect);
+                        valuePlaceholder.appendChild(container);
+                    } else if (field === 'role') {
+                        const otherRoles = (availableOptions.expression_roles || []).filter(r => r !== 'Author' && r !== 'Secondary author');
+                        const roleSelect = createCustomMultiSelect(otherRoles, 'role', {
+                            placeholder: '-- Select Role(s) --',
+                            hideEmpty: true
+                        });
+                        valuePlaceholder.appendChild(roleSelect);
+                    } else if (field === 'manifestation_role') {
+                        const container = document.createElement('div');
+                        container.className = 'manifestation-role-container';
+                        
+                        const roleSelect = createCustomMultiSelect(availableOptions.manifestation_roles, 'manifestation_role', {
+                            placeholder: '-- Select Role --',
+                            hideEmpty: true,
+                            customClass: 'manifestation-role-multiselect'
+                        });
+                        
+                        const personInstSelect = createCustomMultiSelect(availableOptions.all_people_and_institutions, 'person_institution', {
+                            placeholder: '-- Select Person/Institution --',
+                            hideEmpty: true,
+                            customClass: 'person-institution-multiselect'
+                        });
+
+                        container.appendChild(roleSelect);
+                        container.appendChild(personInstSelect);
+                        valuePlaceholder.appendChild(container);
+                    } else if (field === 'visual_object_role') {
+                        const container = document.createElement('div');
+                        container.className = 'manifestation-role-container';
+                        
+                        const roleSelect = createCustomMultiSelect(availableOptions.visual_object_roles, 'visual_object_role', {
+                            placeholder: '-- Select Role --',
+                            hideEmpty: true,
+                            customClass: 'visual-object-role-multiselect'
+                        });
+                        
+                        const personInstSelect = createCustomMultiSelect(availableOptions.all_people_and_institutions, 'person_institution_vo', {
+                            placeholder: '-- Select Person/Institution --',
+                            hideEmpty: true,
+                            customClass: 'person-institution-vo-multiselect'
+                        });
+
+                        container.appendChild(roleSelect);
+                        container.appendChild(personInstSelect);
+                        valuePlaceholder.appendChild(container);
+                    } else {
+                        const optionsMap = {
+                            'author': availableOptions.authors,
+                            'classification': availableOptions.classifications,
+                            'type_of_expression': availableOptions.types_of_expression,
+                            'language': availableOptions.languages,
+                            'place': availableOptions.places,
+                            'preservation_status': availableOptions.preservation_statuses,
+                            'owner': availableOptions.owners,
+                            'material': availableOptions.materials,
+                            'type_of_item': availableOptions.types_of_item,
+                            'work_title': availableOptions.work_titles
+                        };
+                        const configMap = {
+                            'author': { hideEmpty: true },
+                            'classification': { emptyLabel: 'Unclassified' },
+                            'work_title': { hideEmpty: true, placeholder: '-- Select Title(s) --' }
+                        }
+                        const options = optionsMap[field];
+                        const config = configMap[field] || {};
+                        const customSelect = createCustomMultiSelect(options, field, config);
+                        valuePlaceholder.appendChild(customSelect);
+                    }
+                }
+                buildQueryAndFetch();
+            });
+        }
+
+        function updateFieldSelector(selectElement) {
+            const currentEntity = document.getElementById('entity-select').value;
+            if (currentEntity === 'work') {
+                selectElement.innerHTML = `
+                    <option value="">-- Select Field --</option>
+                    <option value="work_title">Title of the work</option>
+                    <option value="classification">Classification</option>
+                    <option value="author">Author</option>
+                `;
+            } else if (currentEntity === 'expression') {
+                selectElement.innerHTML = `
+                    <option value="">-- Select Field --</option>
+                    <option value="work_title">Title of the work</option>
+                    <option value="authorship">Authorship</option>
+                    <option value="role">Role</option>
+                    <option value="type_of_expression">Type of expression</option>
+                    <option value="language">Language</option>
+                    <option value="classification">Classification of work</option>
+                `;
+            } else if (currentEntity === 'manifestation') {
+                selectElement.innerHTML = `
+                    <option value="">-- Select Field --</option>
+                    <option value="work_title">Title of the work</option>
+                    <option value="classification">Classification of work</option>
+                    <option value="type_of_expression">Type of expression</option>
+                    <option value="language">Language</option>
+                    <option value="place">Place</option>
+                    <option value="publication_date">Date</option>
+                    <option value="manifestation_role">Role of person or institution</option>
+                `;
+            } else if (currentEntity === 'item') {
+                selectElement.innerHTML = `
+                
+                    <option value="">-- Select Field --</option>
+                    <option value="work_title">Title of the work</option>
+                    <option value="preservation_status">Preservation status</option>
+                    <option value="owner">Institution or person (owner)</option>
+                    <option value="material">Material</option>
+                    <option value="type_of_item">Type of Item</option>
+                    <option value="visual_object_role">Role of person or institution (Visual Object)</option>
+                    <option value="classification">Classification of work</option>
+                    <option value="type_of_expression">Type of expression</option>
+                    <option value="language">Language</option>
+                    <option value="place">Place</option>
+                    <option value="publication_date">Date</option>
+                `;
+            }
+        }
+
+        function handleEntityChange() {
+            document.querySelectorAll('.filter-row.sub-row').forEach(row => row.remove());
+            buildQueryAndFetch();
+        }
+
+        // --- MODAL HANDLING FUNCTIONS ---
+
+        function showModal(content) {
+            const modalOverlay = document.getElementById('info-modal');
+            const modalContentTarget = document.getElementById('modal-content-target');
+            modalContentTarget.innerHTML = content;
+            modalOverlay.classList.add('visible');
+        }
+
+        function hideModal() {
+            const modalOverlay = document.getElementById('info-modal');
+            modalOverlay.classList.remove('visible');
+        }
+
+        function createEntityLink(id, type, label) {
+            if (!id || !type || !label) return linkify(label || '');
+
+            switch (type) {
+                case 'person':
+                    return `<a href="#" class="author-link" data-author-id="${id}">${label}</a>`;
+                case 'work':
+                    return `<a href="#" class="work-link" data-work-id="${id}">${label}</a>`;
+                case 'abstract_character':
+                    return `<a href="#" class="ac-link" data-ac-id="${id}">${label}</a>`;
+                case 'expression':
+                    return `<a href="#" class="expression-link" data-expression-id="${id}">${label}</a>`;
+                case 'visual_object':
+                    return `<a href="#" class="vo-link" data-vo-id="${id}">${label}</a>`;
+                case 'manifestation':
+                    return `<a href="#" class="manifestation-link" data-manifestation-id="${id}">${label}</a>`;
+                case 'place':
+                    return `<a href="#" class="place-link" data-place-id="${id}">${label}</a>`;
+                case 'item':
+                    return `<a href="#" class="item-link" data-item-id="${id}">${label}</a>`;
+                case 'institution':
+                    return `<a href="#" class="institution-link" data-institution-id="${id}">${label}</a>`;
+                case 'page':
+                    return `<a href="#" class="page-link" data-page-id="${id}">${label}</a>`;
+                case 'physical_object':
+                    return `<a href="#" class="physical-object-link" data-physical-object-id="${id}">${label}</a>`;
+                default:
+                    return linkify(label);
+            }
+        }
+
+        async function renderGenericDetailsModal(endpoint, titleKey) {
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
+                    }
+                });
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+                const data = await response.json();
+
+                let visualObjectsHTML = '';
+                if (data.visual_objects && data.visual_objects.length > 0) {
+                    const voLinks = data.visual_objects.map(vo => 
+                        `<li><a href="#" class="vo-link" data-vo-id="${vo.vo_id}">${vo.vo_name}</a></li>`
+                    ).join('');
+                    visualObjectsHTML = `
+                        <div class="detail-section">
+                            <h4>Visual Objects on this Page</h4>
+                            <ul>${voLinks}</ul>
+                        </div>
+                    `;
+                }
+
+                let physicalObjectsHTML = '';
+                if (data.physical_objects && data.physical_objects.length > 0) {
+                    const poLinks = data.physical_objects.map(po => 
+                        `<li><a href="#" class="physical-object-link" data-physical-object-id="${po.po_id}">${po.po_name}</a></li>`
+                    ).join('');
+                    physicalObjectsHTML = `
+                        <div class="detail-section">
+                            <h4>Physical Objects for this Page</h4>
+                            <ul>${poLinks}</ul>
+                        </div>
+                    `;
+                }
+
+                const relationshipsHTML = data.relationships
+                    .filter(rel => !((rel.type === 'work_is_mentioning' || rel.type === 'work_is_mentioned_by') && rel.direction === 'incoming'))
+                    .map(rel => {
+                        if (rel.direction === 'outgoing') {
+                            const targetHtml = createEntityLink(rel.target_id, rel.target_type, rel.target_label);
+                            return `<li><strong>${rel.type}</strong> → ${targetHtml}</li>`;
+                        } else { // incoming
+                            const sourceHtml = createEntityLink(rel.source_id, rel.source_type, rel.source_label);
+                            return `<li>${sourceHtml} ← <strong>${rel.type}</strong></li>`;
+                        }
+                    }).join('');
+
+                const modalContent = `
+                    <h3>${data[titleKey]}</h3>
+                    ${visualObjectsHTML}
+                    ${physicalObjectsHTML}
+                    <div class="detail-section">
+                        <h4>Relationships</h4>
+                        <ul>${relationshipsHTML || '<li>No relationships found.</li>'}</ul>
+                    </div>
+                `;
+                showModal(modalContent);
+            } catch (error) {
+                showModal(`<p style="color: red;">Could not load details: ${error.message}</p>`);
+            }
+        }
+
+        function handleAuthorClick(authorId) {
+            const endpoint = `${API_BASE_URL}/details/person/${encodeURIComponent(authorId)}`;
+            renderGenericDetailsModal(endpoint, 'person_name');
+        }
+
+        function handleAcClick(acId) {
+            const endpoint = `${API_BASE_URL}/details/abstract_character/${encodeURIComponent(acId)}`;
+            renderGenericDetailsModal(endpoint, 'ac_name');
+        }
+
+        function handleExpressionClick(expressionId) {
+            const endpoint = `${API_BASE_URL}/details/expression/${encodeURIComponent(expressionId)}`;
+            renderGenericDetailsModal(endpoint, 'expression_title');
+        }
+
+        function handleWorkClick(workId) {
+            const endpoint = `${API_BASE_URL}/details/work/${encodeURIComponent(workId)}`;
+            renderGenericDetailsModal(endpoint, 'work_title');
+        }
+
+        function handleVisualObjectClick(voId) {
+            const endpoint = `${API_BASE_URL}/details/visual_object/${encodeURIComponent(voId)}`;
+            renderGenericDetailsModal(endpoint, 'vo_name');
+        }
+        
+        function handleManifestationClick(manifestationId) {
+            const endpoint = `${API_BASE_URL}/details/manifestation/${encodeURIComponent(manifestationId)}`;
+            renderGenericDetailsModal(endpoint, 'manifestation_title');
+        }
+
+        function handlePlaceClick(placeId) {
+            const endpoint = `${API_BASE_URL}/details/place/${encodeURIComponent(placeId)}`;
+            renderGenericDetailsModal(endpoint, 'place_name');
+        }
+
+        function handleItemClick(itemId) {
+            const endpoint = `${API_BASE_URL}/details/item/${encodeURIComponent(itemId)}`;
+            renderGenericDetailsModal(endpoint, 'item_label');
+        }
+
+        function handleInstitutionClick(institutionId) {
+            const endpoint = `${API_BASE_URL}/details/institution/${encodeURIComponent(institutionId)}`;
+            renderGenericDetailsModal(endpoint, 'institution_name');
+        }
+
+        function handlePageClick(pageId) {
+            const endpoint = `${API_BASE_URL}/details/page/${encodeURIComponent(pageId)}`;
+            renderGenericDetailsModal(endpoint, 'page_label');
+        }
+
+        function handlePhysicalObjectClick(physicalObjectId) {
+            const endpoint = `${API_BASE_URL}/details/physical_object/${encodeURIComponent(physicalObjectId)}`;
+            renderGenericDetailsModal(endpoint, 'po_name');
+        }
+
+        async function initialize() {
+            const container = document.getElementById('filter-rows-container');
+            try {
+                const response = await fetch(`${API_BASE_URL}/filters/options`, {
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
+                    }
+                });
+                availableOptions = await response.json();
+
+                const projectOptions = availableOptions.projects || [];
+                const projectSelect = createCustomMultiSelect(projectOptions, 'project', { hideEmpty: true });
+                projectSelect.id = 'project-select';
+
+                const initialRow = document.createElement('div');
+                initialRow.className = 'filter-row';
+                initialRow.innerHTML = `
+                    <span style="font-weight: bold; min-width: 80px;">Projects:</span>
+                    <span class="value-placeholder"></span>
+                    <select id="entity-select">
+                        <option value="work" selected>Work</option>
+                        <option value="expression">Expression</option>
+                        <option value="manifestation">Manifestation</option>
+                        <option value="item">Item</option>
+                    </select>
+                    <div class="row-controls">
+                        <button class="add-row-btn" title="Add new row">+</button>
+                    </div>
+                `;
+                initialRow.querySelector('.value-placeholder').appendChild(projectSelect);
+                container.appendChild(initialRow);
+                
+                initialRow.querySelector('.add-row-btn').addEventListener('click', () => {
+                    addFilterRow(container);
+                });
+                
+                document.getElementById('entity-select').addEventListener('change', handleEntityChange);
+
+                document.querySelector('.modal-close-btn').addEventListener('click', hideModal);
+                document.getElementById('info-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'info-modal') {
+                        hideModal();
+                    }
+                });
+
+                document.body.addEventListener('click', (e) => {
+                    const authorLink = e.target.closest('.author-link');
+                    const workTarget = e.target.closest('.work-link, [data-work-id]:not(a)');
+                    const acLink = e.target.closest('.ac-link');
+                    const expressionTarget = e.target.closest('.expression-link, [data-expression-id]:not(a)');
+                    const voTarget = e.target.closest('.vo-link, .vo-circle');
+                    const manifestationTarget = e.target.closest('.manifestation-link, [data-manifestation-id]:not(a)');
+                    const placeLink = e.target.closest('.place-link');
+                    const itemTarget = e.target.closest('.item-link, [data-item-id]:not(a)');
+                    const institutionLink = e.target.closest('.institution-link');
+                    const pageTarget = e.target.closest('.page-link');
+                    const physicalObjectTarget = e.target.closest('.physical-object-link');
+                    const pagesMainToggle = e.target.closest('.pages-main-toggle');
+                    const showMoreBtn = e.target.closest('.show-more-pages-btn');
+                    
+                    // --- MODIFIED: Reordered logic with if/else if to prevent multiple event firings ---
+                    if (showMoreBtn) {
+                        e.preventDefault();
+                        const itemId = showMoreBtn.dataset.itemId;
+                        const pages = itemPagesData[itemId];
+                        if (!pages) return;
+
+                        let displayedCount = parseInt(showMoreBtn.dataset.displayed, 10);
+                        const nextPages = pages.slice(displayedCount, displayedCount + 10);
+
+                        const query = currentQueryForRendering;
+                        const voRoleRules = query.rules.filter(r => [
+                            'visual_object_owner', 'visual_object_inscriber', 
+                            'visual_object_sender', 'visual_object_recipient'
+                        ].includes(r.field));
+                        
+                        const newContent = renderPageListItems(nextPages, voRoleRules);
+                        
+                        const list = showMoreBtn.previousElementSibling; // The <ul>
+                        if (list) {
+                            list.insertAdjacentHTML('beforeend', newContent);
+                        }
+
+                        displayedCount += nextPages.length;
+                        showMoreBtn.dataset.displayed = displayedCount;
+
+                        if (displayedCount >= pages.length) {
+                            showMoreBtn.style.display = 'none';
+                        }
+                    } else if (e.target.classList.contains('page-toggle')) {
+                        const voList = e.target.nextElementSibling;
+                        if (voList && voList.classList.contains('vo-list')) {
+                            voList.style.display = voList.style.display === 'none' ? 'block' : 'none';
+                        }
+                    } else if (pagesMainToggle) {
+                        const container = pagesMainToggle.nextElementSibling;
+                        if (container && container.classList.contains('pages-list-container')) {
+                            container.style.display = container.style.display === 'none' ? 'block' : 'none';
+                        }
+                    } else if (authorLink) {
+                        e.preventDefault();
+                        handleAuthorClick(authorLink.dataset.authorId);
+                    } else if (acLink) {
+                        e.preventDefault();
+                        handleAcClick(acLink.dataset.acId);
+                    } else if (expressionTarget && expressionTarget.dataset.expressionId) {
+                        e.preventDefault();
+                        handleExpressionClick(expressionTarget.dataset.expressionId);
+                    } else if (workTarget && workTarget.dataset.workId) {
+                        e.preventDefault();
+                        handleWorkClick(workTarget.dataset.workId);
+                    } else if (voTarget && voTarget.dataset.voId) {
+                        e.preventDefault();
+                        handleVisualObjectClick(voTarget.dataset.voId);
+                    } else if (manifestationTarget && manifestationTarget.dataset.manifestationId) {
+                        e.preventDefault();
+                        handleManifestationClick(manifestationTarget.dataset.manifestationId);
+                    } else if (placeLink) {
+                        e.preventDefault();
+                        handlePlaceClick(placeLink.dataset.placeId);
+                    } else if (itemTarget && itemTarget.dataset.itemId) {
+                        e.preventDefault();
+                        handleItemClick(itemTarget.dataset.itemId);
+                    } else if (institutionLink) {
+                        e.preventDefault();
+                        handleInstitutionClick(institutionLink.dataset.institutionId);
+                    } else if (pageTarget) {
+                        e.preventDefault();
+                        handlePageClick(pageTarget.dataset.pageId);
+                    } else if (physicalObjectTarget) {
+                        e.preventDefault();
+                        handlePhysicalObjectClick(physicalObjectTarget.dataset.physicalObjectId);
+                    }
+                });
+
+                buildQueryAndFetch();
+
+            } catch (error) {
+                container.innerHTML = `
+                    <h1>Connection Error</h1>
+                    <p style="color: red;">Could not connect to the API at <strong>${API_BASE_URL}</strong>.</p>
+                    <p>Please make sure the FastAPI server is running: <code>uvicorn main:app --reload</code></p>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+
+</body>
+</html>
