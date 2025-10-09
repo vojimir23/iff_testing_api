@@ -511,10 +511,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/entities/search`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true' // <-- FIX: ADDED HEADER HERE
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(query)
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1153,7 +1150,7 @@
             try {
                 const response = await fetch(endpoint, {
                     headers: {
-                        'ngrok-skip-browser-warning': 'true'
+                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
                     }
                 });
                 if (!response.ok) throw new Error(`Server returned ${response.status}`);
@@ -1272,7 +1269,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/filters/options`, {
                     headers: {
-                        'ngrok-skip-browser-warning': 'true'
+                        'ngrok-skip-browser-warning': 'true' // <-- ADD THIS
                     }
                 });
                 availableOptions = await response.json();
@@ -1417,6 +1414,4 @@
     </script>
 
 </body>
-
 </html>
-
