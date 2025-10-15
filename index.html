@@ -404,7 +404,10 @@
 
 
     <script>
+        // --- THIS IS THE ONLY CHANGE IN THIS FILE ---
         const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev";
+        // --- END OF CHANGE ---
+
         let availableOptions = {};
         let itemPagesData = {};
         let currentQueryForRendering = {};
@@ -1733,7 +1736,7 @@
                 container.innerHTML = `
                     <h1>Connection Error</h1>
                     <p style="color: red;">Could not connect to the API at <strong>${API_BASE_URL}</strong>.</p>
-                    <p>Please make sure the FastAPI server is running: <code>uvicorn main:app --reload</code></p>
+                    <p>Please make sure the FastAPI server is running and that CORS is configured correctly.</p>
                 `;
             }
         }
@@ -1743,4 +1746,3 @@
 
 </body>
 </html>
-
