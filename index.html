@@ -99,11 +99,10 @@
         #results-container {
             margin-top: 2rem;
         }
-        /* --- MODIFIED AND NEW STYLES FOR RESULT CARDS --- */
         #results-content {
             display: flex;
-            flex-wrap: wrap; /* Allows cards to wrap to the next line */
-            gap: 1rem; /* Adds space between cards */
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         .result-card {
             background: #ffffff;
@@ -112,7 +111,7 @@
             padding: 1rem;
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            flex: 1 1 300px; /* Flex properties for responsive cards */
+            flex: 1 1 300px;
             min-width: 280px;
         }
         .result-card h3 {
@@ -147,23 +146,22 @@
         .entity-tag-work { background-color: black; color: white; }
         .entity-tag-expression { background-color: grey; color: white; }
         .entity-tag-manifestation { background-color: orange; color: black; }
-        .entity-tag-item { background-color: #FFC300; color: black; } /* Dark Yellow */
-        .entity-tag-page { background-color: #ADD8E6; color: white; } /* Light Blue */
-        .entity-tag-visual_object { background-color: #FF00FF; color: white; } /* Neon Fuchsia */
+        .entity-tag-item { background-color: #FFC300; color: black; }
+        .entity-tag-page { background-color: #ADD8E6; color: white; }
+        .entity-tag-visual_object { background-color: #FF00FF; color: white; }
         .entity-tag-physical_object { background-color: purple; color: white; }
-        .entity-tag-person { background-color: #2E8B57; color: black; } /* Dark Green */
-        .entity-tag-institution { background-color: #20B2AA; color: black; } /* Greenish Cyan */
-        .entity-tag-event { background-color: #F08080; color: black; } /* Light Red */
-        .entity-tag-abstract_character { background-color: #90EE90; color: black; } /* Light Green */
-        .entity-tag-place { background-color: #B22222; color: white; } /* Dark Red */
+        .entity-tag-person { background-color: #2E8B57; color: white; }
+        .entity-tag-institution { background-color: #20B2AA; color: white; }
+        .entity-tag-event { background-color: #F08080; color: black; }
+        .entity-tag-abstract_character { background-color: #90EE90; color: black; }
+        .entity-tag-place { background-color: #B22222; color: white; }
 
-        .result-card .author-link, .modal-content .author-link, .work-link, .ac-link, .vo-link, .manifestation-link, .place-link, .item-link, .expression-link, .institution-link, .page-link, .physical-object-link {
+        .result-card .author-link, .details-section .author-link, .work-link, .ac-link, .vo-link, .manifestation-link, .place-link, .item-link, .expression-link, .institution-link, .page-link, .physical-object-link {
             cursor: pointer;
             color: #0d6efd;
             text-decoration: underline;
         }
 
-        /* --- CUSTOM MULTI-SELECT DROPDOWN --- */
         .custom-multiselect {
             position: relative;
             min-width: 200px;
@@ -225,64 +223,6 @@
             cursor: pointer;
         }
 
-        /* --- NEW STYLES FOR MODAL POPUP --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.visible {
-            display: flex;
-        }
-        .modal-container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .modal-close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .modal-content h3 {
-            margin-top: 0;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 0.5rem;
-        }
-        .modal-content .detail-section {
-            margin-bottom: 1rem;
-        }
-        .modal-content .detail-section h4 {
-            margin-bottom: 0.5rem;
-        }
-        .modal-content ul {
-            padding-left: 20px;
-            margin: 0;
-        }
-        .modal-content .expression-card, .modal-content .manifestation-card {
-            border: 1px solid #e9ecef;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 4px;
-        }
-
-        /* --- NEW STYLES FOR ITEM PAGES --- */
         .page-toggle {
             cursor: pointer;
             color: #0d6efd;
@@ -299,7 +239,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background-color: #ADD8E6; /* Light Blue */
+            background-color: #ADD8E6;
             color: #212529;
             font-size: 14px;
             font-weight: bold;
@@ -312,7 +252,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
 
-        /* --- NEW STYLES FOR "SHOW MORE" BUTTON --- */
         .show-more-pages-btn {
             display: block;
             margin: 10px auto 0;
@@ -320,7 +259,7 @@
             border: 1px solid #0d6efd;
             background-color: #ffffff;
             color: #0d6efd;
-            border-radius: 20px; /* Pill shape */
+            border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
@@ -329,6 +268,105 @@
         .show-more-pages-btn:hover {
             background-color: #0d6efd;
             color: #ffffff;
+        }
+
+        /* --- NEW/REFINED STYLES FOR DETAILS PAGE --- */
+        #details-page-container {
+            padding: 2rem;
+        }
+        #back-to-search-btn {
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #back-to-search-btn:hover {
+            background-color: #e9ecef;
+        }
+        #details-content-wrapper {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .details-header h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            border: none;
+        }
+        .details-section {
+            margin-bottom: 2.5rem;
+        }
+        .details-section h3 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+            color: #343a40;
+        }
+        .relationship-group {
+            margin-bottom: 1rem;
+        }
+        .relationship-group-label {
+            font-weight: bold;
+            color: black;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .relationship-group-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .relationship-group-list li {
+            padding: 4px 0;
+        }
+
+        /* --- NEW STYLES FOR MENTION CARDS --- */
+        .mention-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .mention-card {
+            display: flex;
+            align-items: stretch;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease;
+        }
+        .mention-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .mention-card-color-bar {
+            flex-shrink: 0;
+            width: 8px;
+        }
+        .mention-card-content {
+            padding: 1rem;
+            flex-grow: 1;
+        }
+        .mention-entity-type {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        .mention-entity-label {
+            font-weight: 500;
         }
 
     </style>
@@ -357,21 +395,247 @@
         </div>
     </div>
 
-    <!-- NEW: Modal Popup HTML -->
-    <div id="info-modal" class="modal-overlay">
-        <div class="modal-container">
-            <button class="modal-close-btn" title="Close">×</button>
-            <div id="modal-content-target" class="modal-content">
-                <!-- Dynamic content will be injected here -->
-            </div>
+    <div id="details-page-container" style="display: none;">
+        <button id="back-to-search-btn">&larr; Back to Search</button>
+        <div id="details-content-wrapper">
+            <!-- Dynamic content will be injected here -->
         </div>
     </div>
+
 
     <script>
         const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev";
         let availableOptions = {};
         let itemPagesData = {};
         let currentQueryForRendering = {};
+
+        const relationshipMappings = {
+            "WORK": [
+                {"name": "work_has_uniform_title", "label": "Uniform title"},
+                {"name": "work_has_classification", "label": "Classification"},
+                {"name": "work_authored_by_person", "label": "Author (person)"},
+                {"name": "work_authored_by_institution", "label": "Author (institution)"},
+                {"name": "work_is_mentioning", "label": "Mentioning"},
+                {"name": "work_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "work_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "EXPRESSION": [
+                {"name": "expression_has_medium", "label": "Medium"},
+                {"name": "expression_has_language", "label": "Language"},
+                {"name": "expression_has_number", "label": "Number"},
+                {"name": "expression_has_type", "label": "Type"},
+                {"name": "expression_has_completeness", "label": "Completeness"},
+                {"name": "expression_has_incipit", "label": "Incipit"},
+                {"name": "expression_has_explicit", "label": "Explicit"},
+                {"name": "is_expression_of_work", "label": "Work expressed"},
+                {"name": "expression_has_secondary_author", "label": "Secondary author"},
+                {"name": "expression_has_responsibility_statement", "label": "Responsibility statement"},
+                {"name": "expression_is_mentioning", "label": "Mentioning"},
+                {"name": "expression_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "expression_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "MANIFESTATION": [
+                {"name": "manifestation_has_volume", "label": "Volume"},
+                {"name": "manifestation_has_external_id", "label": "External ID"},
+                {"name": "manifestation_has_short_title", "label": "Short title"},
+                {"name": "manifestation_published_in_place", "label": "Place of publication"},
+                {"name": "manifestation_has_publication_date", "label": "Date of publication"},
+                {"name": "manifestation_has_print_run", "label": "Print run"},
+                {"name": "manifestation_has_edition_number", "label": "Edition number"},
+                {"name": "manifestation_has_volume_title", "label": "Title of the volume(s)"},
+                {"name": "manifestation_has_number_of_volumes", "label": "Number of volumes"},
+                {"name": "manifestation_has_publication_date_range", "label": "Date range of publication"},
+                {"name": "manifestation_has_format", "label": "Format"},
+                {"name": "manifestation_has_collation_formula", "label": "Collation formula"},
+                {"name": "manifestation_has_number_of_pages", "label": "Number of pages"},
+                {"name": "manifestation_has_introduction_pages", "label": "Introduction pages"},
+                {"name": "manifestation_has_external_digitization", "label": "External digitization"},
+                {"name": "manifestation_has_pages", "label": "Pages"},
+                {"name": "is_manifestation_of_expression", "label": "Expression manifested"},
+                {"name": "manifestation_published_by_person", "label": "Publisher (person)"},
+                {"name": "manifestation_edited_by_person", "label": "Editor (person)"},
+                {"name": "manifestation_corrected_by_person", "label": "Corrector (person)"},
+                {"name": "manifestation_sponsored_by_person", "label": "Sponsor (person)"},
+                {"name": "manifestation_published_by_institution", "label": "Publisher (institution)"},
+                {"name": "manifestation_sponsored_by_institution", "label": "Sponsor (institution)"},
+                {"name": "manifestation_is_mentioning", "label": "Mentioning"},
+                {"name": "manifestation_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "manifestation_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "PLACE": [
+                {"name": "place_has_name", "label": "Name"},
+                {"name": "place_has_description", "label": "Description (Wikidata)"},
+                {"name": "place_has_wikidata_link", "label": "Wikidata link"},
+                {"name": "place_has_alias", "label": "Also known as"},
+                {"name": "place_has_viaf_code", "label": "VIAF code"},
+                {"name": "place_has_other_codes", "label": "Other codes"},
+                {"name": "place_has_wikidata_id", "label": "Wikidata ID"},
+                {"name": "place_has_coordinates", "label": "Coordinates"},
+                {"name": "place_is_mentioning", "label": "Mentioning"},
+                {"name": "place_mentioned_by", "label": "Mentioned by"},
+                {"name": "place_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "ITEM": [
+                {"name": "item_has_shelf_mark", "label": "Shelf mark"},
+                {"name": "item_has_preservation_status", "label": "Preservation status"},
+                {"name": "item_has_material", "label": "Material"},
+                {"name": "item_has_type", "label": "Type"},
+                {"name": "item_has_dimensions", "label": "Dimensions (height/width)"},
+                {"name": "item_has_copy_number", "label": "Copy number"},
+                {"name": "item_has_surviving_pages", "label": "Surviving pages"},
+                {"name": "item_has_page_preservation_status", "label": "Page preservation status"},
+                {"name": "item_has_physical_description", "label": "Physical description"},
+                {"name": "item_owned_by_person", "label": "Owner (person)"},
+                {"name": "item_owned_by_institution", "label": "Owner (institution)"},
+                {"name": "item_contains_physical_object", "label": "Contains physical object"},
+                {"name": "is_item_of_manifestation", "label": "Manifestation item"},
+                {"name": "item_is_mentioning", "label": "Mentioning"},
+                {"name": "item_mentioned_by", "label": "Mentioned by"},
+                {"name": "item_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "PAGE": [
+                {"name": "item_has_page", "label": "Page of item"},
+                {"name": "page_has_name", "label": "Name"},
+                {"name": "page_has_description", "label": "Description"},
+                {"name": "page_has_material", "label": "Material"},
+                {"name": "page_has_digital_representation", "label": "Digital representation"},
+                {"name": "page_references_physical_object", "label": "References physical object"},
+                {"name": "page_contains_visual_object", "label": "Contains visual object"},
+                {"name": "page_contains_physical_object", "label": "Contains physical object"},
+                {"name": "physical_object_contains_page", "label": "Contained in physical object"},
+                {"name": "page_is_mentioning", "label": "Mentioning"},
+                {"name": "page_mentioned_by", "label": "Mentioned by"},
+                {"name": "page_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "VISUAL_OBJECT": [
+                {"name": "visual_object_has_instrument", "label": "Instrument"},
+                {"name": "visual_object_has_colour", "label": "Colour"},
+                {"name": "visual_object_has_type", "label": "Type"},
+                {"name": "visual_object_has_transcription", "label": "Transcription"},
+                {"name": "visual_object_has_description", "label": "Description"},
+                {"name": "visual_object_has_transcription_quality", "label": "Transcription quality"},
+                {"name": "visual_object_has_function", "label": "Function"},
+                {"name": "visual_object_has_language", "label": "Language"},
+                {"name": "visual_object_has_position_on_page", "label": "Position on page"},
+                {"name": "visual_object_located_at_place", "label": "Place"},
+                {"name": "visual_object_has_date", "label": "Date"},
+                {"name": "visual_object_owned_by_person", "label": "Owner (person)"},
+                {"name": "visual_object_owned_by_institution", "label": "Owner (institution)"},
+                {"name": "visual_object_inscribed_by_person", "label": "Inscribed by"},
+                {"name": "visual_object_sent_by_person", "label": "Sent by"},
+                {"name": "visual_object_received_by_person", "label": "Received by"},
+                {"name": "visual_object_is_mentioning", "label": "Mentioning"},
+                {"name": "visual_object_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "visual_object_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "PERSON": [
+                {"name": "person_has_name", "label": "Name"},
+                {"name": "person_has_birth_date", "label": "Date of birth"},
+                {"name": "person_has_birth_date_notes", "label": "Birth date notes"},
+                {"name": "person_has_death_date", "label": "Date of death"},
+                {"name": "person_has_death_date_notes", "label": "Death date notes"},
+                {"name": "person_has_notes", "label": "Additional notes"},
+                {"name": "person_has_wikidata_link", "label": "Wikidata link"},
+                {"name": "person_has_gender", "label": "Gender"},
+                {"name": "person_has_alias", "label": "Also known as"},
+                {"name": "person_member_of_institution", "label": "Member of institution"},
+                {"name": "person_has_description", "label": "Description (Wikidata)"},
+                {"name": "person_has_viaf_code", "label": "VIAF code"},
+                {"name": "person_has_other_codes", "label": "Other codes"},
+                {"name": "person_has_wikidata_id", "label": "Wikidata ID"},
+                {"name": "person_is_mentioning", "label": "Mentioning"},
+                {"name": "person_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "person_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "PHYSICAL_OBJECT": [
+                {"name": "physical_object_has_insertion_type", "label": "Insertion type"},
+                {"name": "physical_object_has_type", "label": "Type"},
+                {"name": "physical_object_has_description", "label": "Description"},
+                {"name": "physical_object_has_dimensions", "label": "Dimensions (height/width)"},
+                {"name": "physical_object_has_preservation_status", "label": "Preservation status"},
+                {"name": "physical_object_located_at_place", "label": "Place"},
+                {"name": "physical_object_has_date", "label": "Date"},
+                {"name": "physical_object_created_by_person", "label": "Created by (person)"},
+                {"name": "physical_object_created_by_institution", "label": "Created by (institution)"},
+                {"name": "physical_object_is_mentioning", "label": "Mentioning"},
+                {"name": "abstract_character_mentioned_by", "label": "Mentioned by"},
+                {"name": "physical_object_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "EVENT": [
+                {"name": "event_has_name", "label": "Name"},
+                {"name": "event_has_description", "label": "Description"},
+                {"name": "event_has_wikidata_link", "label": "Wikidata link"},
+                {"name": "event_has_date", "label": "Date"},
+                {"name": "event_occurred_at_place", "label": "Place"},
+                {"name": "event_has_wikidata_description", "label": "Description (Wikidata)"},
+                {"name": "event_has_alias", "label": "Also known as"},
+                {"name": "event_has_viaf_code", "label": "VIAF code"},
+                {"name": "event_has_other_codes", "label": "Other codes"},
+                {"name": "event_has_wikidata_id", "label": "Wikidata ID"},
+                {"name": "event_is_mentioning", "label": "Mentioning"},
+                {"name": "abstract_character_mentioned_by", "label": "Mentioned by"},
+                {"name": "event_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "ABSTRACT_CHARACTER": [
+                {"name": "abstract_character_has_name", "label": "Name"},
+                {"name": "abstract_character_has_type", "label": "Type"},
+                {"name": "abstract_character_has_gender", "label": "Gender"},
+                {"name": "abstract_character_has_description", "label": "Description"},
+                {"name": "abstract_character_has_wikidata_link", "label": "Wikidata link"},
+                {"name": "abstract_character_has_alias", "label": "Also known as"},
+                {"name": "abstract_character_has_wikidata_description", "label": "Description (Wikidata)"},
+                {"name": "abstract_character_has_viaf_code", "label": "VIAF code"},
+                {"name": "abstract_character_has_other_codes", "label": "Other codes"},
+                {"name": "abstract_character_has_wikidata_id", "label": "Wikidata ID"},
+                {"name": "abstract_character_is_mentioning", "label": "Mentioning"},
+                {"name": "abstract_character_mentioned_by", "label": "Mentioned by"},
+                {"name": "abstract_character_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "INSTITUTION": [
+                {"name": "institution_has_name", "label": "Name"},
+                {"name": "institution_has_wikidata_link", "label": "Wikidata link"},
+                {"name": "institution_has_founding_date", "label": "Founding date"},
+                {"name": "institution_has_dissolution_date", "label": "Dissolution date"},
+                {"name": "institution_located_at_place", "label": "Place"},
+                {"name": "institution_has_founding_date_notes", "label": "Founding date notes"},
+                {"name": "institution_has_dissolution_date_notes", "label": "Dissolution date notes"},
+                {"name": "institution_has_wikidata_description", "label": "Description (Wikidata)"},
+                {"name": "institution_has_alias", "label": "Also known as"},
+                {"name": "institution_has_viaf_code", "label": "VIAF code"},
+                {"name": "institution_has_other_codes", "label": "Other codes"},
+                {"name": "institution_has_wikidata_id", "label": "Wikidata ID"},
+                {"name": "institution_is_mentioning", "label": "Mentioning"},
+                {"name": "institution_is_mentioned_by", "label": "Mentioned by"},
+                {"name": "institution_has_hypothesis", "label": "Hypothesis"}
+            ],
+            "HYPOTHESIS": [
+                {"name": "hypothesis_has_description", "label": "Description"},
+                {"name": "hypothesis_has_date", "label": "Date"},
+                {"name": "hypothesis_created_by_person", "label": "Created by (person)"},
+                {"name": "is_hypothesis_about", "label": "About entity/entities"}
+            ]
+        };
+        const relationshipLabelMap = new Map();
+        Object.values(relationshipMappings).forEach(entityRelations => {
+            entityRelations.forEach(relation => {
+                relationshipLabelMap.set(relation.name, relation.label);
+            });
+        });
+        const entityTypeToCssClass = {
+            'work': 'entity-tag-work',
+            'expression': 'entity-tag-expression',
+            'manifestation': 'entity-tag-manifestation',
+            'item': 'entity-tag-item',
+            'page': 'entity-tag-page',
+            'visual_object': 'entity-tag-visual_object',
+            'physical_object': 'entity-tag-physical_object',
+            'person': 'entity-tag-person',
+            'institution': 'entity-tag-institution',
+            'event': 'entity-tag-event',
+            'abstract_character': 'entity-tag-abstract_character',
+            'place': 'entity-tag-place'
+        };
+
 
         function linkify(text) {
             if (typeof text !== 'string' || !text) return text;
@@ -456,7 +720,7 @@
                     const personInstSelect = manifestationRoleFilter.querySelector('.person-institution-multiselect');
 
                     const selectedRoles = Array.from(roleSelect.querySelectorAll('input[type="checkbox"]:checked'))
-                        .map(cb => cb.value.toLowerCase()) // e.g., 'publisher'
+                        .map(cb => cb.value.toLowerCase())
                         .filter(val => val !== '__select_all__');
                     
                     const selectedPeopleAndInst = Array.from(personInstSelect.querySelectorAll('input[type="checkbox"]:checked'))
@@ -507,23 +771,16 @@
             document.getElementById('api-payload').textContent = JSON.stringify(query, null, 2);
             currentQueryForRendering = query;
 
-            // --- MODIFIED LOGIC ---
-            // If no projects are selected AND no filter rules exist, clear the results and stop.
-            // This prevents fetching all data by default.
             if (query.projects.length === 0 && query.rules.length === 0) {
                 document.getElementById('results-content').innerHTML = '<p>Please select at least one project or add a filter to see results.</p>';
                 document.getElementById('results-count').textContent = '0';
-                return; // Exit before making the API call
+                return; 
             }
-            // --- END MODIFIED LOGIC ---
             
             try {
                 const response = await fetch(`${API_BASE_URL}/entities/search`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true' // <-- FIXED
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(query)
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -562,10 +819,23 @@
                             return attributes.includes(rule.value);
                         };
 
-                        if (notRules.some(rule => checkMatch(rule))) return false;
-                        if (!andRules.every(rule => checkMatch(rule))) return false;
-                        if (orRules.length > 0 && !orRules.some(rule => checkMatch(rule))) return false;
-                        
+                        const meetsAnyNots = notRules.some(rule => checkMatch(rule));
+                        if (meetsAnyNots) {
+                            return false;
+                        }
+
+                        const meetsAllAnds = andRules.every(rule => checkMatch(rule));
+                        const meetsAnyOrs = orRules.some(rule => checkMatch(rule));
+
+                        if (andRules.length > 0 && orRules.length > 0) {
+                            return meetsAllAnds && meetsAnyOrs;
+                        }
+                        if (andRules.length > 0) {
+                            return meetsAllAnds;
+                        }
+                        if (orRules.length > 0) {
+                            return meetsAnyOrs;
+                        }
                         return true;
                     });
                 }
@@ -586,7 +856,7 @@
 
         function displayResults(results, entity, query) {
             const resultsContent = document.getElementById('results-content');
-            itemPagesData = {}; // Clear previous data
+            itemPagesData = {};
 
             if (results.length === 0) {
                 resultsContent.innerHTML = '<p>No results match the current filters.</p>';
@@ -741,21 +1011,56 @@
                     
                     let pagesContainerHTML = ' <em>None</em>';
                     if (item.pages && item.pages.length > 0) {
-                        itemPagesData[item.item_id] = item.pages; // Store full data for this item
+                        
+                        let matchingPages = item.pages;
 
-                        const initialPages = item.pages.slice(0, 10);
-                        const initialPageContent = renderPageListItems(initialPages, voRoleRules);
+                        if (voRoleRules.length > 0) {
+                            const andRules = voRoleRules.filter(r => r.logic === 'and');
+                            const orRules = voRoleRules.filter(r => r.logic === 'or');
+                            const notRules = voRoleRules.filter(r => r.logic === 'not');
 
-                        const showMoreButton = item.pages.length > 10
-                            ? `<button class="show-more-pages-btn" data-item-id="${item.item_id}" data-displayed="10">Show More</button>`
-                            : '';
+                            matchingPages = item.pages.filter(page => {
+                                if (!page.visual_objects || page.visual_objects.length === 0) {
+                                    return false;
+                                }
+                                return page.visual_objects.some(vo => {
+                                    const roleMap = {
+                                        'visual_object_owner': vo.owners || [],
+                                        'visual_object_inscriber': vo.inscribers || [],
+                                        'visual_object_sender': vo.senders || [],
+                                        'visual_object_recipient': vo.recipients || []
+                                    };
+                                    const checkMatch = (rule) => (roleMap[rule.field] || []).includes(rule.value);
 
-                        if (initialPageContent) {
-                            pagesContainerHTML = `
-                                <div class="pages-list-container" style="display: none;">
-                                    <ul style="list-style-type: none; padding-left: 0;">${initialPageContent}</ul>
-                                    ${showMoreButton}
-                                </div>`;
+                                    if (notRules.some(checkMatch)) return false;
+                                    
+                                    const meetsAllAnds = andRules.every(checkMatch);
+                                    const meetsAnyOrs = orRules.length === 0 || orRules.some(checkMatch);
+                                    
+                                    return meetsAllAnds && meetsAnyOrs;
+                                });
+                            });
+                        }
+
+                        if (matchingPages.length > 0) {
+                            itemPagesData[item.item_id] = matchingPages; 
+
+                            const initialPages = matchingPages.slice(0, 10);
+                            const initialPageContent = renderPageListItems(initialPages, voRoleRules);
+
+                            const showMoreButton = matchingPages.length > 10
+                                ? `<button class="show-more-pages-btn" data-item-id="${item.item_id}" data-displayed="10">Show More</button>`
+                                : '';
+
+                            if (initialPageContent) {
+                                pagesContainerHTML = `
+                                    <div class="pages-list-container" style="display: none;">
+                                        <ul style="list-style-type: none; padding-left: 0;">${initialPageContent}</ul>
+                                        ${showMoreButton}
+                                    </div>`;
+                            } else {
+                                pagesContainerHTML = ' <em>No pages with visual objects matching the specified roles.</em>';
+                            }
                         } else {
                             pagesContainerHTML = ' <em>No pages with visual objects matching the specified roles.</em>';
                         }
@@ -1113,18 +1418,9 @@
             buildQueryAndFetch();
         }
 
-        // --- MODAL HANDLING FUNCTIONS ---
-
-        function showModal(content) {
-            const modalOverlay = document.getElementById('info-modal');
-            const modalContentTarget = document.getElementById('modal-content-target');
-            modalContentTarget.innerHTML = content;
-            modalOverlay.classList.add('visible');
-        }
-
-        function hideModal() {
-            const modalOverlay = document.getElementById('info-modal');
-            modalOverlay.classList.remove('visible');
+        function showSearchPage() {
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('details-page-container').style.display = 'none';
         }
 
         function createEntityLink(id, type, label) {
@@ -1158,128 +1454,160 @@
             }
         }
 
-        async function renderGenericDetailsModal(endpoint, titleKey) {
+        async function renderEntityDetailsPage(endpoint, titleKey, entityType) {
+            const mainContainer = document.querySelector('.container');
+            const detailsContainer = document.getElementById('details-page-container');
+            const detailsContent = document.getElementById('details-content-wrapper');
+            detailsContent.innerHTML = '<p>Loading...</p>';
+
+            mainContainer.style.display = 'none';
+            detailsContainer.style.display = 'block';
+            window.scrollTo(0, 0);
+
             try {
-                const response = await fetch(endpoint, {
-                    headers: { 'ngrok-skip-browser-warning': 'true' } // <-- FIXED
-                });
+                const response = await fetch(endpoint);
                 if (!response.ok) throw new Error(`Server returned ${response.status}`);
                 const data = await response.json();
 
-                let visualObjectsHTML = '';
-                if (data.visual_objects && data.visual_objects.length > 0) {
-                    const voLinks = data.visual_objects.map(vo => 
-                        `<li><a href="#" class="vo-link" data-vo-id="${vo.vo_id}">${vo.vo_name}</a></li>`
-                    ).join('');
-                    visualObjectsHTML = `
-                        <div class="detail-section">
-                            <h4>Visual Objects on this Page</h4>
-                            <ul>${voLinks}</ul>
-                        </div>
-                    `;
-                }
+                const groupedRelationships = {};
+                const mentionRelationships = {};
 
-                let physicalObjectsHTML = '';
-                if (data.physical_objects && data.physical_objects.length > 0) {
-                    const poLinks = data.physical_objects.map(po => 
-                        `<li><a href="#" class="physical-object-link" data-physical-object-id="${po.po_id}">${po.po_name}</a></li>`
-                    ).join('');
-                    physicalObjectsHTML = `
-                        <div class="detail-section">
-                            <h4>Physical Objects for this Page</h4>
-                            <ul>${poLinks}</ul>
-                        </div>
-                    `;
-                }
-
-                const relationshipsHTML = data.relationships
+                data.relationships
                     .filter(rel => !((rel.type === 'work_is_mentioning' || rel.type === 'work_is_mentioned_by') && rel.direction === 'incoming'))
-                    .map(rel => {
-                        if (rel.direction === 'outgoing') {
-                            const targetHtml = createEntityLink(rel.target_id, rel.target_type, rel.target_label);
-                            return `<li><strong>${rel.type}</strong> → ${targetHtml}</li>`;
-                        } else { // incoming
-                            const sourceHtml = createEntityLink(rel.source_id, rel.source_type, rel.source_label);
-                            return `<li>${sourceHtml} ← <strong>${rel.type}</strong></li>`;
-                        }
-                    }).join('');
+                    .forEach(rel => {
+                        const label = relationshipLabelMap.get(rel.type) || rel.type;
+                        
+                        const entityId = rel.direction === 'outgoing' ? rel.target_id : rel.source_id;
+                        const relatedEntityType = rel.direction === 'outgoing' ? rel.target_type : rel.source_type;
+                        const entityLabel = rel.direction === 'outgoing' ? rel.target_label : rel.source_label;
+                        
+                        const relationshipData = {
+                            link: createEntityLink(entityId, relatedEntityType, entityLabel),
+                            type: relatedEntityType,
+                            label: entityLabel
+                        };
 
-                const modalContent = `
-                    <h3>${data[titleKey]}</h3>
-                    ${visualObjectsHTML}
-                    ${physicalObjectsHTML}
-                    <div class="detail-section">
-                        <h4>Relationships</h4>
-                        <ul>${relationshipsHTML || '<li>No relationships found.</li>'}</ul>
+                        if (label === 'Mentioning' || label === 'Mentioned by') {
+                            // --- MODIFIED LOGIC: Only include mentions for the current entity type ---
+                            if (rel.type.startsWith(entityType)) {
+                                if (!mentionRelationships[label]) {
+                                    mentionRelationships[label] = [];
+                                }
+                                mentionRelationships[label].push(relationshipData);
+                            }
+                        } else {
+                            if (!groupedRelationships[label]) {
+                                groupedRelationships[label] = [];
+                            }
+                            groupedRelationships[label].push(relationshipData);
+                        }
+                    });
+
+                const regularRelationsHTML = Object.keys(groupedRelationships).length > 0 ?
+                    Object.entries(groupedRelationships).map(([label, items]) => `
+                        <div class="relationship-group">
+                            <span class="relationship-group-label">${label}</span>
+                            <ul class="relationship-group-list">
+                                ${items.map(item => `<li>${item.link}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('') : '';
+
+                const mentionRelationsHTML = Object.keys(mentionRelationships).length > 0 ?
+                    Object.entries(mentionRelationships).map(([label, items]) => `
+                        <div class="details-section">
+                            <h3>${label}</h3>
+                            <div class="mention-cards-container">
+                                ${items.map(item => `
+                                    <div class="mention-card">
+                                        <div class="mention-card-color-bar ${entityTypeToCssClass[item.type] || ''}"></div>
+                                        <div class="mention-card-content">
+                                            <div class="mention-entity-type">${item.type.replace(/_/g, ' ')}</div>
+                                            <div class="mention-entity-label">${item.link}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('') : '';
+
+                const pageContent = `
+                    <div class="details-header">
+                        <h1>${data[titleKey]}</h1>
                     </div>
+                    <div class="details-section">
+                        <h3>Relationships</h3>
+                        ${regularRelationsHTML || '<p>No direct relationships found.</p>'}
+                    </div>
+                    ${mentionRelationsHTML}
                 `;
-                showModal(modalContent);
+
+                detailsContent.innerHTML = pageContent;
+
             } catch (error) {
-                showModal(`<p style="color: red;">Could not load details: ${error.message}</p>`);
+                detailsContent.innerHTML = `<p style="color: red;">Could not load details: ${error.message}</p>`;
             }
         }
 
         function handleAuthorClick(authorId) {
             const endpoint = `${API_BASE_URL}/details/person/${encodeURIComponent(authorId)}`;
-            renderGenericDetailsModal(endpoint, 'person_name');
+            renderEntityDetailsPage(endpoint, 'person_name', 'person');
         }
 
         function handleAcClick(acId) {
             const endpoint = `${API_BASE_URL}/details/abstract_character/${encodeURIComponent(acId)}`;
-            renderGenericDetailsModal(endpoint, 'ac_name');
+            renderEntityDetailsPage(endpoint, 'ac_name', 'abstract_character');
         }
 
         function handleExpressionClick(expressionId) {
             const endpoint = `${API_BASE_URL}/details/expression/${encodeURIComponent(expressionId)}`;
-            renderGenericDetailsModal(endpoint, 'expression_title');
+            renderEntityDetailsPage(endpoint, 'expression_title', 'expression');
         }
 
         function handleWorkClick(workId) {
             const endpoint = `${API_BASE_URL}/details/work/${encodeURIComponent(workId)}`;
-            renderGenericDetailsModal(endpoint, 'work_title');
+            renderEntityDetailsPage(endpoint, 'work_title', 'work');
         }
 
         function handleVisualObjectClick(voId) {
             const endpoint = `${API_BASE_URL}/details/visual_object/${encodeURIComponent(voId)}`;
-            renderGenericDetailsModal(endpoint, 'vo_name');
+            renderEntityDetailsPage(endpoint, 'vo_name', 'visual_object');
         }
         
         function handleManifestationClick(manifestationId) {
             const endpoint = `${API_BASE_URL}/details/manifestation/${encodeURIComponent(manifestationId)}`;
-            renderGenericDetailsModal(endpoint, 'manifestation_title');
+            renderEntityDetailsPage(endpoint, 'manifestation_title', 'manifestation');
         }
 
         function handlePlaceClick(placeId) {
             const endpoint = `${API_BASE_URL}/details/place/${encodeURIComponent(placeId)}`;
-            renderGenericDetailsModal(endpoint, 'place_name');
+            renderEntityDetailsPage(endpoint, 'place_name', 'place');
         }
 
         function handleItemClick(itemId) {
             const endpoint = `${API_BASE_URL}/details/item/${encodeURIComponent(itemId)}`;
-            renderGenericDetailsModal(endpoint, 'item_label');
+            renderEntityDetailsPage(endpoint, 'item_label', 'item');
         }
 
         function handleInstitutionClick(institutionId) {
             const endpoint = `${API_BASE_URL}/details/institution/${encodeURIComponent(institutionId)}`;
-            renderGenericDetailsModal(endpoint, 'institution_name');
+            renderEntityDetailsPage(endpoint, 'institution_name', 'institution');
         }
 
         function handlePageClick(pageId) {
             const endpoint = `${API_BASE_URL}/details/page/${encodeURIComponent(pageId)}`;
-            renderGenericDetailsModal(endpoint, 'page_label');
+            renderEntityDetailsPage(endpoint, 'page_label', 'page');
         }
 
         function handlePhysicalObjectClick(physicalObjectId) {
             const endpoint = `${API_BASE_URL}/details/physical_object/${encodeURIComponent(physicalObjectId)}`;
-            renderGenericDetailsModal(endpoint, 'po_name');
+            renderEntityDetailsPage(endpoint, 'po_name', 'physical_object');
         }
 
         async function initialize() {
             const container = document.getElementById('filter-rows-container');
             try {
-                const response = await fetch(`${API_BASE_URL}/filters/options`, {
-                    headers: { 'ngrok-skip-browser-warning': 'true' } // <-- FIXED
-                });
+                const response = await fetch(`${API_BASE_URL}/filters/options`);
                 availableOptions = await response.json();
 
                 const projectOptions = availableOptions.projects || [];
@@ -1310,12 +1638,7 @@
                 
                 document.getElementById('entity-select').addEventListener('change', handleEntityChange);
 
-                document.querySelector('.modal-close-btn').addEventListener('click', hideModal);
-                document.getElementById('info-modal').addEventListener('click', (e) => {
-                    if (e.target.id === 'info-modal') {
-                        hideModal();
-                    }
-                });
+                document.getElementById('back-to-search-btn').addEventListener('click', showSearchPage);
 
                 document.body.addEventListener('click', (e) => {
                     const authorLink = e.target.closest('.author-link');
@@ -1332,7 +1655,6 @@
                     const pagesMainToggle = e.target.closest('.pages-main-toggle');
                     const showMoreBtn = e.target.closest('.show-more-pages-btn');
                     
-                    // --- MODIFIED: Reordered logic with if/else if to prevent multiple event firings ---
                     if (showMoreBtn) {
                         e.preventDefault();
                         const itemId = showMoreBtn.dataset.itemId;
@@ -1350,7 +1672,7 @@
                         
                         const newContent = renderPageListItems(nextPages, voRoleRules);
                         
-                        const list = showMoreBtn.previousElementSibling; // The <ul>
+                        const list = showMoreBtn.previousElementSibling;
                         if (list) {
                             list.insertAdjacentHTML('beforeend', newContent);
                         }
@@ -1406,9 +1728,6 @@
                         handlePhysicalObjectClick(physicalObjectTarget.dataset.physicalObjectId);
                     }
                 });
-
-                // No initial fetch on page load.
-                // buildQueryAndFetch();
 
             } catch (error) {
                 container.innerHTML = `
