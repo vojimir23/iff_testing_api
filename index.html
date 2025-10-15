@@ -404,10 +404,7 @@
 
 
     <script>
-        // --- THIS IS THE ONLY CHANGE IN THIS FILE ---
         const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev";
-        // --- END OF CHANGE ---
-
         let availableOptions = {};
         let itemPagesData = {};
         let currentQueryForRendering = {};
@@ -783,7 +780,10 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/entities/search`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true' // <-- FIX ADDED HERE
+                    },
                     body: JSON.stringify(query)
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1468,7 +1468,9 @@
             window.scrollTo(0, 0);
 
             try {
-                const response = await fetch(endpoint);
+                const response = await fetch(endpoint, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' } // <-- FIX ADDED HERE
+                });
                 if (!response.ok) throw new Error(`Server returned ${response.status}`);
                 const data = await response.json();
 
@@ -1610,7 +1612,9 @@
         async function initialize() {
             const container = document.getElementById('filter-rows-container');
             try {
-                const response = await fetch(`${API_BASE_URL}/filters/options`);
+                const response = await fetch(`${API_BASE_URL}/filters/options`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' } // <-- FIX ADDED HERE
+                });
                 availableOptions = await response.json();
 
                 const projectOptions = availableOptions.projects || [];
