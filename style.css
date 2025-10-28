@@ -1,0 +1,463 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    padding: 2rem;
+}
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+h1, h2 {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+}
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+}
+.filter-row select, .filter-row input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.date-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.date-filter-container input {
+    width: 80px;
+}
+.authorship-search-container, .manifestation-role-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logic-selector button {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+.logic-selector button.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+.row-controls button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6c757d;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.row-controls button:hover {
+    background-color: #e9ecef;
+}
+#api-info-container {
+    margin-top: 2rem;
+    background-color: #e9ecef;
+    padding: 1rem;
+    border-radius: 6px;
+}
+#api-info-container pre {
+    background-color: #343a40;
+    color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+#results-container {
+    margin-top: 2rem;
+}
+#results-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+.result-card {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Enforce same height in a grid row */
+}
+/* MODIFICATION: Style for scrollable titles */
+.result-card h3 {
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: underline;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    white-space: normal; /* Allow wrapping */
+    word-break: break-word; /* Break long words */
+    max-height: 70px; /* Approx 3 lines, adjust as needed */
+    overflow-y: auto; /* Add scrollbar if content overflows */
+    padding-right: 5px; /* Add some space for the scrollbar */
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 8px;
+}
+.entity-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.project-tag {
+    font-size: 12px;
+    font-weight: bold;
+    color: #6c757d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Entity Tag Colors */
+.entity-tag-work { background-color: black; color: white; }
+.entity-tag-expression { background-color: grey; color: white; }
+.entity-tag-manifestation { background-color: orange; color: black; }
+.entity-tag-manifestation-volume { background-color: #E67E22; color: white; } /* NEW */
+.entity-tag-item { background-color: #FFC300; color: black; }
+.entity-tag-page { background-color: #ADD8E6; color: white; }
+.entity-tag-visual_object { background-color: #FF00FF; color: white; }
+.entity-tag-physical_object { background-color: purple; color: white; }
+.entity-tag-person { background-color: #2E8B57; color: white; }
+.entity-tag-institution { background-color: #20B2AA; color: white; }
+.entity-tag-event { background-color: #F08080; color: black; }
+.entity-tag-abstract_character { background-color: #90EE90; color: black; }
+.entity-tag-place { background-color: #B22222; color: white; }
+.entity-tag-hypothesis { background-color: #4682B4; color: white; }
+
+.result-card .author-link, .details-section .author-link, .work-link, .ac-link, .vo-link, .manifestation-link, .manifestation-volume-link, .place-link, .item-link, .expression-link, .institution-link, .page-link, .physical-object-link, .hypothesis-link {
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.custom-multiselect {
+    position: relative;
+    min-width: 200px;
+}
+.multiselect-display {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.multiselect-panel {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-top: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.multiselect-panel.visible {
+    display: block;
+}
+.multiselect-search {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    outline: none;
+}
+.multiselect-options-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.multiselect-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.multiselect-option:hover {
+    background-color: #f1f1f1;
+}
+.multiselect-option.special-option {
+    font-weight: bold;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+.multiselect-option label {
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.page-toggle {
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: underline;
+}
+.vo-list {
+    padding-left: 20px;
+    margin-top: 5px;
+}
+.vo-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #ADD8E6;
+    color: #212529;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 4px 4px 0;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.vo-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.show-more-pages-btn {
+    display: block;
+    margin: 10px auto 0;
+    padding: 8px 16px;
+    border: 1px solid #0d6efd;
+    background-color: #ffffff;
+    color: #0d6efd;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.show-more-pages-btn:hover {
+    background-color: #0d6efd;
+    color: #ffffff;
+}
+
+/* --- NEW/REFINED STYLES FOR DETAILS PAGE --- */
+#details-page-container {
+    padding: 2rem;
+}
+#back-to-search-btn {
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+#back-to-search-btn:hover {
+    background-color: #e9ecef;
+}
+#details-content-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.details-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.details-header h1 {
+    font-size: 2rem; /* Smaller title */
+    margin: 0;
+    border: none;
+    flex-grow: 1;
+}
+.details-entity-tag {
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+.details-section {
+    margin-bottom: 2.5rem;
+}
+.details-section h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    color: #343a40;
+}
+.parent-entities-container {
+    background-color: #f0f0f0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+}
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+/* --- STYLES FOR SQUARED CARDS AND TEXT TRUNCATION (MODIFIED) --- */
+.cards-container .result-card {
+    /* aspect-ratio: 1 / 1; REMOVED to allow flexible height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 180px; /* Set a min-height for consistency */
+}
+/* MODIFICATION: Apply same scrolling logic to inner page cards */
+.cards-container .result-card h3 {
+    white-space: normal;
+    word-break: break-word;
+    max-height: 70px; /* Same as main results */
+    overflow-y: auto; /* Same as main results */
+    padding-right: 5px; /* Same as main results */
+    font-size: 1rem;
+    /* REMOVED -webkit-line-clamp properties */
+}
+.cards-container .result-card p {
+    /* REMOVED -webkit-line-clamp properties */
+    overflow: visible; /* Ensure content is not hidden */
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+.cards-container .result-card .mention-entity-label {
+     /* REMOVED -webkit-line-clamp properties */
+    overflow: visible; /* Ensure content is not hidden */
+}
+
+
+/* --- NEW STYLES FOR HYPOTHESIS & PHYSICAL OBJECT TAGS --- */
+.hypothesis-tags-container, .physical-object-tag-container, .annotated-pages-tag-container {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+.hypothesis-tag {
+    background-color: #FFC0CB; /* Rose color */
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 4px 4px 0 0;
+    display: inline-block;
+    border: 1px solid #FFB6C1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.hypothesis-tag:hover {
+    background-color: #FFB6C1;
+}
+
+/* --- MODIFICATION START: Grouped common styles and defined specific colors --- */
+.physical-object-tag,
+.annotated-pages-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 4px 4px 0 0;
+    display: inline-block;
+}
+.physical-object-tag {
+    background-color: #ADD8E6; /* Light Blue */
+    color: #212529;
+    border: 1px solid #9AC0D3;
+}
+.annotated-pages-tag {
+    background-color: #2E8B57; /* Dark Green (SeaGreen) */
+    color: white;
+    border: 1px solid #20633d;
+}
+/* --- MODIFICATION END --- */
+
+/* --- NEW STYLES FOR HYPOTHESIS ON DETAILS PAGE --- */
+.details-hypothesis-container {
+    margin-top: -1.5rem; /* Pull up closer to the title */
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Space between multiple hypothesis tags */
+    align-items: flex-start; /* Align to the left */
+}
+.details-hypothesis-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between arrow and tag */
+}
+.hypothesis-arrow {
+    font-weight: bold;
+    color: #6c757d; /* A neutral grey color */
+    font-size: 1.2rem;
+}
+/* If there are multiple hypotheses, make the tags a bit smaller */
+.details-hypothesis-container:has(.details-hypothesis-item + .details-hypothesis-item) .hypothesis-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+}
+
+/* --- NEW STYLES FOR PERSON'S CREATED HYPOTHESES SECTION --- */
+.hypothesis-group {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+.hypothesis-group:last-child {
+    margin-bottom: 0;
+}
+.hypothesis-group h4 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.hypothesis-group h4 a {
+    text-decoration: none;
+    color: #0d6efd;
+}
+.hypothesis-group h4 a:hover {
+    text-decoration: underline;
+}
