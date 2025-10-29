@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev/";
+const API_BASE_URL = "https://preumbonal-manually-zita.ngrok-free.dev";
 let availableOptions = {};
 let itemPagesData = {};
 let currentQueryForRendering = {};
@@ -1428,3 +1428,4 @@ async function initialize() {
 
 
 document.addEventListener('DOMContentLoaded', initialize);
+
