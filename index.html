@@ -27,6 +27,11 @@
             <!-- Filter rows will be dynamically inserted here -->
         </div>
 
+        <!-- NEW: Container for Graph Filters -->
+        <div id="graph-filters-container" style="display: none;">
+            <!-- Graph-specific filters will be dynamically inserted here -->
+        </div>
+
         <div id="api-info-container">
             <h2>API Request Info</h2>
             <p><strong>Endpoint:</strong> <code id="api-endpoint"></code></p>
@@ -38,6 +43,14 @@
             <h2>Results (<span id="results-count">0</span>)</h2>
             <div id="results-content">
                 <p>Please select at least one project or add a filter to see results.</p>
+            </div>
+        </div>
+
+        <!-- NEW: Container for Graph Visualization -->
+        <div id="graph-container" style="display: none;">
+            <h2>Graph Visualization</h2>
+            <div id="graph-content">
+                <p>Please select projects and filters to render the graph.</p>
             </div>
         </div>
     </div>
