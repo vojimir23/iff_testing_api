@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPAC-style Search</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 
+      IMPORTANT: Load the mappings file FIRST.
+      This creates the 'relationshipMappings' variable.
+    -->
+    <script src="relationship_mappings.js" defer></script>
+
+    <!-- 
+      Then, load the main script file.
+      This script needs to use the variable from the file above.
+    -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Find Entities by Criteria</h1>
+        
+        <div id="filter-rows-container">
+            <!-- Filter rows will be dynamically inserted here -->
+        </div>
+
+        <div id="graph-filters-container" style="display: none;">
+            <!-- Graph-specific filters will be dynamically inserted here -->
+        </div>
+
+        <div id="api-info-container">
+            <h2>API Request Info</h2>
+            <p><strong>Endpoint:</strong> <code id="api-endpoint"></code></p>
+            <p><strong>Request Body:</strong></p>
+            <pre><code id="api-payload"></code></pre>
+        </div>
+
+        <div id="results-container">
+            <h2>Results (<span id="results-count">0</span>)</h2>
+            <div id="results-content">
+                <p>Please select at least one project or add a filter to see results.</p>
+            </div>
+        </div>
+
+        <div id="graph-container" style="display: none;">
+            <h2>Graph Visualization</h2>
+            <div id="graph-content">
+                <p>Please select projects and filters to render the graph.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="details-page-container" style="display: none;">
+        <button id="back-to-search-btn">&larr; Back to Search</button>
+        <div id="details-content-wrapper">
+            <!-- Dynamic content will be injected here -->
+        </div>
+    </div>
+
+</body>
+</html>
